@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown List Example</title>
+
+   
+</head>
+<body>
+    <h1>Select a Form</h1>
+    <label for="textInput">Enter text:</label>
+    <input type="text" id="textInput" placeholder="Enter course/ bearing." />
+    <select id="redgreen-select" name="form">   
+        <option value="true">True</option>
+        <option value="green">Green</option>
+        <option value="red">Red</option>
+    </select>
+
+
+   <br><br>
+    <label for="form-select">Choose a form:</label>
+    <select id="form-select" name="form">
+        <option value="form1">Form 1</option>
+        <option value="form2">Form 2</option>
+        <option value="form3">Form 3</option>
+        <option value="form4">Form 4</option>
+        <option value="form5">Form 5</option>
+        <option value="form6">Form 6</option>
+        <option value="form9">Form 9</option>
+        <option value="form10">Form 10</option>
+        <option value="fmn">Form</option>
+        <option value="fmnGDiv">Form G Div</option>
+        <option value="fmnDiv">Form Div</option>
+        <option value="formu">Form U</option>
+        <option value="formv">Form V</option>
+        <option value="turn">Turn</option>
+        <option value="corpen">Corpen</option>
+        <option value="corpend">Corpen D</option>
+
+
+
+
+
+    </select>
+
+   <br><br>
+    <button onclick="handleSelection()">Submit</button>
+   <br><br>
+    <button id = "guideButton" onclick="changeGuide(this)">Guide A1</button>
+   <br><br>
+
+
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+
+
+
+<script>
+   	let SD = 70;
+    	let doubleSD = 2 * SD;
+	let size = 20;
+	let ship1Bearing, ship2Bearing, ship4Bearing, ship1Range, ship2Range, ship4Range, oldship1Bearing, oldship4Bearing, intship1Bearing, intship4Bearing;
+	let currentCourse;
+	let course;
+	let lineView;
+	let guide = 1;
+	let lineBearing;
+	let div = 0;
+	let newBearingsAndRanges;
+	let oldCourse, X1, Y1, X4, Y4; 
+
+
+
+	function changeGuide(button) {
+    		const buttonGuide = button.innerText;
+   		if (buttonGuide.includes("A1")) {
+        	button.textContent = "Guide B2";
+        	guide = 2;
+    		} else {
+        	button.textContent = "Guide A1";
+        	guide = 1;
+    		}
+            lineView.updateBearingsAndRanges(newBearingsAndRanges);
+
+	}
+
+        function handleSelection() {
+            // Get the selected value from the dropdown
+            const selectedForm = document.getElementById("form-select").value;
+
+	    if (selectedForm.includes("fmn")){
+		console.log("fmn included");
+	    	lineBearing = TrueRelativeConverter(Number(document.getElementById("textInput").value), course);
+	    } else{
+            course = document.getElementById("textInput").value;
+	    console.log("Course is not underf",course);
+	    if (!course.trim()){
+		course = TrueRelativeConverter(0, oldCourse);
+		} 
+	    else{
+		course = TrueRelativeConverter(Number(course), oldCourse);
+		}
+	    }
+
+	    whatForm(selectedForm);
+        }
+
+	function whatForm(form){
+
+
+	    // Checks the Form and returns the bearings from C3
+	    if (form === "form1"){
+        	ship1Bearing = course;
+        	ship2Bearing = course;
+        	ship4Bearing = angleCheck(course - 180);
+        	ship1Range = doubleSD;
+        	ship2Range = SD;
+        	ship4Range = SD;
+        	console.log("Form 1" + course);}
+
+	    if (form === "form2"){
+        	console.log("Form 2" + course);
+
+                ship4Bearing = course;
+        	ship2Bearing = angleCheck(course - 180);
+        	ship1Bearing = angleCheck(course - 180);
+        	ship1Range = doubleSD;
+        	ship2Range = SD;
+        	ship4Range = SD;
+		}
+
+	    if (form === "form3"){
+        	ship4Bearing = course + 90;
+        	console.log("Form 3" + ship4Bearing);
+        	ship2Bearing = angleCheck(course - 90);
+       		ship1Bearing = angleCheck(course - 90);
+        	ship1Range = doubleSD;
+        	ship2Range = SD;
+        	ship4Range = SD;
+
+		}
+   	    if (form === "form4"){
+        	console.log("Form 4" + course);
+        	ship1Bearing = course + 90;
+        	ship2Bearing = course + 90;
+        	ship4Bearing = angleCheck(course - 90);
+        	ship1Range = doubleSD;
+        	ship2Range = SD;
+        	ship4Range = SD;
+		}
+   	    if (form === "form5"){
+        	ship1Bearing = angleCheck(course - 90);
+        	ship2Data = calculateRangeAndBearing(doubleSD,ship1Bearing, SD,angleCheck(course + 180) );
+        	ship2Range = ship2Data[0];
+        	ship2Bearing = ship2Data[1];
+
+        	ship4Bearing = angleCheck(course + 180);
+        	ship1Range = doubleSD;
+        	ship4Range = SD;
+		}
+
+	    if (form === "form6"){
+            	ship1Bearing = angleCheck(course + 90);
+            	ship2Data = calculateRangeAndBearing(doubleSD, ship1Bearing, SD, angleCheck(course + 180));
+        	ship2Range =  ship2Data[0];
+        	ship2Bearing =  ship2Data[1];
+        	ship4Bearing = angleCheck(course + 180);
+        	ship1Range = doubleSD;
+        	ship4Range = SD;
+		}
+
+	    if (form === "form9"){
+            	ship1Bearing = angleCheck(course + 90);
+        	ship1Bearing = course;
+        	ship4Bearing = angleCheck(course + 90);
+        	ship2Data = calculateRangeAndBearing(doubleSD, ship1Bearing, SD, angleCheck(course + 90));
+        	ship2Range = ship2Data[0];
+        	ship2Bearing =  ship2Data[1];
+        	ship1Range = doubleSD;
+        	ship4Range = SD;
+		}
+
+   	    if (form === "form9"){
+            	ship1Bearing = angleCheck(course + 90);
+        	ship1Bearing = course;
+        	ship4Bearing = angleCheck(course + 90);
+        	ship2Data = calculateRangeAndBearing(doubleSD, ship1Bearing, SD, angleCheck(course + 90));
+        	ship2Range = ship2Data[0];
+        	ship2Bearing =  ship2Data[1];
+        	ship1Range = doubleSD;
+        	ship4Range = SD;
+		}
+
+   	    if (form === "form10"){
+        ship1Bearing = course;
+
+        	ship2Data = calculateRangeAndBearing(doubleSD, ship1Bearing, SD, angleCheck(course - 90));
+        	ship2Range =  ship2Data[0];
+        	ship2Bearing =  ship2Data[1];
+
+        	ship4Bearing = angleCheck(course - 90);
+        	ship1Range = doubleSD;
+        	ship4Range = SD;
+		}
+
+
+	    if (form === "fmn") {
+        	let recplineBearing =  recp(lineBearing);
+	    if (div == 0) {
+            console.log("RUNNING THE DIV = 0", String.valueOf(guide));
+
+            if (guide == 1){
+                console.log("GUIDE IS 1 ","");
+
+                if (ship2Range > ship1Range){
+                    console.log("LINE ABREAST WITH 1 NOT END SHIP","");
+
+                    if (angleCheck(ship2Bearing - course) == 90 || angleCheck(ship2Bearing - course) == 270){
+                        if (recp(ship1Bearing) == angleCheck(course - 90)){
+                            console.log("LA TO COL","");
+                            ship2Bearing = recplineBearing;
+                            ship1Bearing = recplineBearing;
+                            ship4Bearing = recplineBearing;
+                        } else {
+                            ship2Bearing = lineBearing;
+                            ship1Bearing = lineBearing;
+                            ship4Bearing = lineBearing;
+                        }
+
+                    } else{
+
+                        if (angleCheck(ship2Bearing - course) == 0 || angleCheck(ship2Bearing - course) == 180){
+                            console.log("COL TO LA","COL TO LA");
+                            if (ship2Bearing == course){
+                                ship1Bearing = lineBearing;
+                                ship2Bearing = lineBearing;
+                                ship4Bearing = lineBearing;
+                            } else {
+                                ship1Bearing = recplineBearing;
+                                ship2Bearing = recplineBearing;
+                                ship4Bearing = recplineBearing;
+                            }
+
+                        } else{
+                            console.log("NEAREST BEARING","NEAREST BEARING");
+                            ship1Bearing =  getCloserBearing(lineBearing, ship1Bearing);
+                            ship2Bearing = getCloserBearing(lineBearing, ship2Bearing);
+                            ship4Bearing = getCloserBearing(lineBearing, ship4Bearing);
+                        }
+
+                    }
+
+                } else{
+                    ship1Bearing =  recplineBearing;
+                    ship2Bearing = recplineBearing;
+                    ship4Bearing = lineBearing;
+                }
+
+            } else if (guide == 2) {
+
+                if (ship1Range > ship2Range){
+                    // checks if 90degrees from old line of bearing
+                    if ((lineBearing - ship2Bearing)%90 == 0){
+
+                        if (angleCheck(ship1Bearing - course) == 90 || angleCheck(ship1Bearing - course) == 270){
+                            console.log("LINE ABREAST WITH 2 NOT END SHIP","");
+                            if (recp(ship2Bearing) == angleCheck(course - 90)){
+                                console.log("LA TO COL","");
+                                ship2Bearing = recplineBearing;
+                                ship1Bearing = recplineBearing;
+                                ship4Bearing = lineBearing;
+                            } else {
+                                ship2Bearing = lineBearing;
+                                ship1Bearing = lineBearing;
+                                ship4Bearing = recplineBearing;
+                            }
+
+                        } else{
+
+                            if (angleCheck(ship1Bearing - course) == 0 || angleCheck(ship1Bearing - course) == 180){
+                                console.log("COL TO LA","COL TO LA");
+                                if (ship1Bearing == course){
+                                    ship1Bearing = lineBearing;
+                                    ship2Bearing = lineBearing;
+                                    ship4Bearing = recplineBearing;
+                                } else {
+                                    ship1Bearing = recplineBearing;
+                                    ship2Bearing = recplineBearing;
+                                    ship4Bearing = lineBearing;
+                                }
+
+                            }
+
+                        }
+
+                    } else{
+                        console.log("Nearest Bearing", "Nearest Bearing");
+                        ship1Bearing =  getCloserBearing(lineBearing, ship1Bearing);
+                        ship2Bearing = getCloserBearing(lineBearing, ship2Bearing);
+                        ship4Bearing = getCloserBearing(lineBearing, ship4Bearing);
+                    }
+
+                } else {
+                    console.log("END SHIP 2", "END SHIP 2");
+                    ship1Bearing =  recplineBearing;
+                    ship2Bearing = recplineBearing;
+                    ship4Bearing = recplineBearing;
+
+                }
+
+
+            }
+
+        } if (div == 1){
+
+            if (guide == 1){
+
+                ship1Bearing = ship1Bearing;
+                resultBC = calculateRangeAndBearing(doubleSD, ship1Bearing, SD, lineBearing);
+                ship2Range = resultBC[0];
+                ship2Bearing = resultBC[1];
+                console.log("Ship 2 range", String.valueOf(ship2Range));
+                ship4Bearing = lineBearing;
+                ship4Range = SD;
+
+            } if (guide == 2){        
+        
+		oldbearing2from4 =  calculateRangeAndBearing(SD, recp(ship4Bearing), ship2Range, ship2Bearing);
+                ship4Bearing = recp(lineBearing);
+                resultShip2 = calculateRangeAndBearing(SD, recp(lineBearing), oldbearing2from4[0],oldbearing2from4[1]);
+                ship2Bearing = resultShip2[1];
+                ship2Range = resultShip2[0];
+                resultShip1 = calculateRangeAndBearing(ship2Range, ship2Bearing, SD, lineBearing);
+                ship1Bearing = resultShip1[1];
+                ship1Range = resultShip1[0];
+
+            }
+        }
+    }
+
+	if (form === "turn"){
+	//
+	}
+	
+	if (form === "fmnGDiv"){
+
+     		if (guide == 2){
+            		ship2Data = calculateRangeAndBearing(SD, ship4Bearing, doubleSD, recp(lineBearing));
+            		ship2Bearing = ship2Data[1];
+            		ship2Range = ship2Data[0];
+            		ship1Data = calculateRangeAndBearing(ship2Range, ship2Bearing, SD, recp(ship4Bearing));
+            		ship1Bearing = ship1Data[1];
+            		ship1Range = ship1Data[0];
+
+        	} if (guide == 1){
+            		ship1Bearing = recp(lineBearing);
+            		ship1Range = doubleSD;
+            		ship2Data = calculateRangeAndBearing(ship1Range, ship1Bearing, SD, ship4Bearing);
+            		ship2Bearing = ship2Data[1];
+            		ship2Range = ship2Data[0];
+
+        	}
+	
+	}
+
+	if (form === "fmnDiv"){
+
+        if (guide == 1){
+            ship2Data = calculateRangeAndBearing(ship1Range, ship1Bearing, SD, lineBearing);
+            ship2Range = ship2Data[0];
+            ship2Bearing = ship2Data[1];
+            ship4Range = SD;
+            ship4Bearing = lineBearing;
+
+        } if (guide == 2){
+
+            ship2to4 = calculateRangeAndBearing(ship4Range, recp(ship4Bearing), ship2Range, ship2Bearing);
+            ship4Bearing = recp(lineBearing);
+            ship2Data = calculateRangeAndBearing(SD, ship4Bearing, ship2to4[0], ship2to4[1]);
+            ship2Bearing = ship2Data[1];
+            ship2Range = ship2Data[0];
+            ship1Data = calculateRangeAndBearing(ship2Range, ship2Bearing, SD, lineBearing);
+            ship1Bearing = ship1Data[1];
+            ship1Range = ship1Data[0];
+        }
+	
+	}
+
+	if (form === "corpen"){
+
+		if ((Math.abs(ship1Bearing - oldCourse) % 90 === 0) && (Math.abs(ship4Bearing - oldCourse) % 90 === 0)) {
+        		console.log("COL or LA");
+
+
+    		if ((Math.abs(ship4Bearing - oldCourse) % 180 !== 0 || div === 1)) {
+        		console.log("Line Abreast Corpen or Multiple Lines", (Math.abs(oldCourse - course) % 90).toString());
+
+        	if (bearingDifference(oldCourse,course)) {
+
+            		let leftOrRight = LeftRight(oldCourse, course);
+            		let guideButton = document.getElementById("guideButton");  // Access the button by ID
+
+		if ((Math.abs(ship4Bearing - course) % 180 !== 0)){
+			console.log("Ship 4 bearing in line with the new bearing")
+ 		if (ship4Bearing == oldCourse){
+                        if (guide!=2){
+		            alert("Automatic Guide Change: B2");
+                            guide = 2;
+                            guideButton.textContent = "Guide B2";
+                        }
+
+
+                    } else{
+                        if (guide != 1){
+		    	    alert("Automatic Guide Change: A1");
+                            guide = 1;
+                            guideButton.textContent = "Guide A1";
+                        }
+
+
+			
+		}
+}
+
+           	else if ((ship4Bearing === angleCheck(oldCourse - 90) && leftOrRight == 0) || (ship4Bearing == angleCheck(oldCourse + 90) && leftOrRight == 1)) {
+			console.log("Checking guide for corpen")
+
+                if (guide != 1) {
+        	    console.log("Changing Guide to 1");
+                    guide = 1;
+                    guideButton.textContent = "Guide A1";  // Update button text
+
+	    	    alert("Automatic Guide Change: A1");
+                }
+
+            	} else {
+                	if (guide != 2) {
+        	    		console.log("Changing Guide to 2");
+                   		guide = 2;
+                    		guideButton.textContent = "Guide B2";  // Update button text
+	    		        alert("Automatic Guide Change: B2");
+
+
+                }
+            }
+
+        } else {
+	    alert("Prohibited Manoeuvre: Line Abreast CO >90");
+		course = oldCourse;
+		return;
+        }
+    }
+
+ 	else if (ship4Bearing == oldCourse){
+                        if (guide!=2){
+		            alert("Automatic Guide Change: B2");
+                            guide = 2;
+                            guideButton.textContent = "Guide B2";
+                        }
+
+
+                    } else{
+                        if (guide != 1){
+		    	    alert("Automatic Guide Change: A1");
+                            guide = 1;
+                            guideButton.textContent = "Guide A1";
+                        }
+
+                    }
+
+
+                } else{
+		    alert("Prohibited Manoeuvre: Ships in L.O.B");
+		    course = oldCourse;
+		return;
+
+
+                }
+
+		changeCourse = (course - oldCourse)
+        	ship1Bearing = angleCheck(ship1Bearing + changeCourse);
+        	ship2Bearing = angleCheck(ship2Bearing + changeCourse);
+        	ship4Bearing = angleCheck(ship4Bearing + changeCourse);
+		console.log("CO S4",ship4Bearing)
+	}
+
+	if (form === "corpend"){
+                if (Math.abs(ship4Bearing - oldCourse)%90 == 0){
+                    //Checks if LA or COL
+
+                    if (Math.abs(ship4Bearing - oldCourse) != 0 && Math.abs(ship4Bearing - oldCourse) != 180) {
+                        // Ship 4 in LA
+                        console.log("Line Abreast","4 bearing 90");
+
+                        if (bearingDifference(oldCourse,course)){
+
+                            let leftOrRight = LeftRight(oldCourse, course);
+                            if (ship4Bearing == angleCheck(oldCourse - 90) && leftOrRight == 0 || ship4Bearing == angleCheck(oldCourse + 90) && leftOrRight == 1 ){
+                                console.log("Set Guide 1", "");
+
+                                 if (guide !== 1){
+					console.log("corpenD Line Abreast Change guide 1")
+
+				     alert("Automatic Guide Change: A1");
+                                     guide = 1;
+                                     guideButton.textContent = "Guide A1";
+                                 }
+
+
+                            } else {
+                                console.log("Set Guide 2", "");
+                                if (guide !== 2){
+				    console.log("corpenD Line Abreast Change guide 2")
+				    alert("Automatic Guide Change: B2");
+                                    guide = 2;
+                                    guideButton.textContent = "Guide B2";
+                                }
+
+
+                            }
+
+                        } else{
+			    alert("Prohibited Manoeuvre: Line Abreast CO > 90");
+				course = oldCourse;
+
+				console.log("The course is: " + course)
+			    return;
+                        }
+
+                    }
+
+                    else if (ship4Bearing == oldCourse){
+			console.log("Ship 4 bearing = old course")
+                        if (guide != 2){
+                            guide = 2;
+                            guideButton.textContent = "Guide B2";
+			    alert("Automatic Guide Change: B2");
+                        }
+
+
+                    } else{
+			console.log("Ship 4 bearing = old course")
+
+                        if (guide != 1){
+                            guide = 1;
+                            guideButton.textContent = "Guide A1";
+    		   	    alert("Automatic Guide Change: A1");
+
+                        }
+
+                    }
+
+
+                } else{
+    		    alert("Prohibited Manoeuvre: Ships in L.O.B");
+		course = oldCourse;
+
+                    return;
+                }
+
+  		ship2to4 = calculateRangeAndBearing(ship4Range,recp(ship4Bearing), ship2Range, (ship2Bearing));
+            	headingChange = course - oldCourse;
+            	ship4Bearing = angleCheck(headingChange + ship4Bearing);
+            	ship2Data = calculateRangeAndBearing(ship4Range, ship4Bearing, doubleSD, ship2to4[1]);
+            	ship2Bearing = ship2Data[1];
+            	ship2Range = ship2Data[0];
+            	ship1Data = calculateRangeAndBearing(ship2Range, ship2Bearing, SD, recp(ship4Bearing));
+            	ship1Bearing = ship1Data[1];
+            	ship1Range = ship1Data[0];
+
+	}
+
+	if (form === "formu"){
+		course = oldCourse;
+		ship2to4 = calculateRangeAndBearing(ship4Range,recp(ship4Bearing), ship2Range, (ship2Bearing));
+		ship4Bearing = angleCheck(oldship4Bearing + course);
+        	ship2Data = calculateRangeAndBearing(ship4Range, ship4Bearing, doubleSD, ship2to4[1]);
+        	ship2Bearing = ship2Data[1];
+        	ship2Range = ship2Data[0];
+	
+	}
+
+
+	if (form === "formv"){
+		course = oldCourse;
+		ship1Bearing = angleCheck(oldship1Bearing + course);
+        	ship2Data = calculateRangeAndBearing(ship4Range, ship4Bearing, doubleSD, ship1Bearing);
+        	ship2Bearing = ship2Data[1];
+        	ship2Range = ship2Data[0];
+	
+	}
+
+
+        if (ship1Bearing != ship2Bearing){
+            console.log("SETTING DIV", "SETTING DIV 1");
+            div = 1;
+        } else {
+            console.log("SETTING DIV", "SETTING DIV 0");
+
+	    div = 0;
+	}
+
+        	oldCourse = course;
+		if (intship4Bearing != (ship4Bearing - course)){
+			oldship4Bearing = intship4Bearing;
+			intship4Bearing =  (ship4Bearing - course);
+			console.log("FMN U Course", oldship4Bearing);
+
+		}
+
+		if (intship1Bearing != (ship1Bearing - course)){
+			oldship1Bearing = intship1Bearing;
+			intship1Bearing =  (ship1Bearing - course);
+			console.log("FMN V Course", oldship1Bearing);
+
+		}
+
+
+
+           newBearingsAndRanges = [
+                [ship1Bearing, ship1Range, course, guide], // New: 120° bearing, 250 distance
+                [ship2Bearing, ship2Range, course], // New: 210° bearing, 150 distance
+                [course, 0, course],
+                [ship4Bearing, ship4Range, course]  // New: 330° bearing, 200 distance
+            ];
+
+
+            lineView.updateBearingsAndRanges(newBearingsAndRanges);
+		
+	   		
+	}
+        // Get the canvas element and its drawing context
+
+
+    function TrueRelativeConverter(bearing, course){
+        const trButton = document.getElementById("redgreen-select").value;
+
+        //trButton = greenRed.getSelectedItem().toString();
+
+        if (trButton === "true"){
+            return bearing;
+        } else if (trButton === "red"){
+            bearing = angleCheck(course - bearing);
+            return bearing;
+        } else{
+            bearing = angleCheck(course + bearing);
+            return bearing;
+        }
+
+    }
+
+function bearingDifference(bearing1, bearing2) {
+    // Calculate the absolute difference between the two bearings
+    let difference = Math.abs(bearing1 - bearing2);
+
+    // Adjust the difference for wraparound (e.g., difference between 350° and 10° should be 20°)
+    if (difference > 180) {
+        difference = 360 - difference;
+    }
+	console.log("Bearing Diff: " + difference);
+
+    // Return true if the difference is 90 degrees or less
+    return difference <= 90;
+}
+
+	function angleCheck(angle){
+
+    
+        	if (angle >= 360){
+            		angle = angle - 360;
+        	} else if (angle < 0) {
+            		angle = angle + 360;
+        	}
+        	return angle;
+    		}
+	function calculateRangeAndBearing(rangeCA, bearingCA, rangeAB, bearingAB) {
+    	// Convert bearings from degrees to radians for calculations
+    	const bearingCARad = bearingCA * (Math.PI / 180);
+   	const bearingABRad = bearingAB * (Math.PI / 180);
+
+    	// Calculate the coordinates of Point A relative to Point C (origin)
+    	const xA = rangeCA * Math.cos(bearingCARad);
+    	const yA = rangeCA * Math.sin(bearingCARad);
+
+    	// Calculate the coordinates of Point B relative to Point C
+    	const xB = xA + rangeAB * Math.cos(bearingABRad);
+    	const yB = yA + rangeAB * Math.sin(bearingABRad);
+
+    	// Calculate the range from B to C
+    	const rangeBC = Math.sqrt(xB * xB + yB * yB);
+
+    	// Calculate the bearing from B to C (atan2 gives result in radians)
+    	let bearingBC = Math.atan2(yB, xB) * (180 / Math.PI);
+    	console.log("BEARING CHECK FOR FUNC", Math.ceil(bearingBC));
+
+    	// Ensure the bearing is in the range [0, 360)
+    	bearingBC = angleCheck(Math.round(bearingBC));
+
+    	// Return the result as a new object with the range and bearing
+    	return [rangeBC,  bearingBC];
+	}
+
+    function recp(angle){
+        angle = angleCheck(180 + angle);
+        return angle;
+    }
+
+function angularDistance(bearing1, bearing2) {
+    let diff = bearing2 - bearing1;
+    if (diff > 180) {
+        diff -= 360; // Adjust for wrap-around
+    } else if (diff < -180) {
+        diff += 360; // Adjust for wrap-around
+    }
+    return Math.abs(diff);
+}
+
+function getCloserBearing(bearing1, targetBearing) {
+    // Calculate the angular distances to both bearings
+    const bearing2 = recp(bearing1);
+    const distanceToBearing1 = angularDistance(targetBearing, bearing1);
+    const distanceToBearing2 = angularDistance(targetBearing, bearing2);
+
+    // Return the closer bearing
+    return (distanceToBearing1 < distanceToBearing2) ? bearing1 : bearing2;
+}
+
+function LeftRight(originalBearing, newBearing) {
+    originalBearing = normalizeBearing(originalBearing);
+    newBearing = normalizeBearing(newBearing);
+
+    // Calculate the clockwise (right) and counterclockwise (left) differences
+    const clockwiseDiff = normalizeBearing(newBearing - originalBearing);
+    const counterClockwiseDiff = normalizeBearing(originalBearing - newBearing);
+
+    if (clockwiseDiff < counterClockwiseDiff) {
+        return 0;  // Turning right (clockwise) is faster
+    } else {
+        return 1;  // Turning left (counterclockwise) is faster
+    }
+}
+
+   function normalizeBearing(bearing) {
+        // Treat 360 as 0
+        if (bearing == 360) {
+            return 0;
+        }
+        return (bearing % 360 + 360) % 360;
+    }
+
+   function drawExtendedLine(x1, y1, x2, y2, extension = 15) {
+       const angle = Math.atan2(y2 - y1, x2 - x1);
+       const extendedX1 = x1 - extension * Math.cos(angle);
+       const extendedY1 = y1 - extension * Math.sin(angle);
+       const extendedX2 = x2 + extension * Math.cos(angle);
+       const extendedY2 = y2 + extension * Math.sin(angle);
+
+	return [extendedX1,extendedY1,extendedX2, extendedY2];
+	}
+
+
+
+
+  class LineView {
+    constructor(context) {
+        this.context = context; // Store the context for use in drawing
+        this.init();
+    }
+
+    init() {
+        this.paint = { strokeWidth: 2, style: 'stroke', antiAlias: true, color: 'black' };
+        this.paintLOB = { strokeWidth: 2, style: 'stroke', antiAlias: true, color: 'red' ,  dashPattern: [5, 5]};
+
+        this.bearingsAndRanges = [
+            [0, 100, 0],
+            [45, 150, 0],
+            [0, 0, 0],
+            [270, 250, 0]
+        ];
+    }
+
+    updateBearingsAndRanges(newBearingsAndRanges) {
+        this.bearingsAndRanges = newBearingsAndRanges;
+        this.clearCanvas();
+        this.onDraw(); // No need to pass canvas, already available in context
+    }
+
+    clearCanvas() {
+        this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+    }
+
+    onDraw() {
+        this.centerX = this.context.canvas.width / 2;
+        this.centerY = this.context.canvas.height / 2 +30;
+        let i = 1;
+
+        for (let bearingAndRange of this.bearingsAndRanges) {
+            let bearing = bearingAndRange[0];
+            let range = bearingAndRange[1];
+            let course = (bearingAndRange[2] - 90) * (Math.PI / 180);
+
+            this.paint.color = i === 3 ? 'blue' : 'black'; // Set color based on index
+
+            let angle = (bearing - 90) * (Math.PI / 180);
+            let endX = this.centerX + Math.cos(angle) * range;
+            let endY = this.centerY + Math.sin(angle) * range;
+            let newendX = Math.cos(course) * size; // Assuming 'size' is defined globally
+            let newendY = Math.sin(course) * size;
+
+	    if (i === 1){
+		X1 = endX;
+		Y1 = endY;
+	    } 
+		
+	    if (i === 4){
+		X4 = endX;
+		Y4 = endY;
+	}
+
+            this.drawLine(endX, endY, endX - newendX, endY - newendY, this.paint);
+
+	    if (i === guide) {
+            	this.drawText(i + " ⚑", endX + 15, endY + 20, this.paint); // Pass 'i' as text
+	    } else {
+            	this.drawText(i , endX + 15, endY + 20, this.paint); // Pass 'i' as text
+	    }
+
+            i++;
+        }
+	this.drawText("Heading: "+course , this.context.canvas.width/20 , 15, this.paint); 
+	let heading = course;
+	if (heading == 0){heading = 360;}
+	if (Math.abs(ship1Bearing - heading) %90 != 0){
+		this.drawText("Line Of Bearing (Guide): " + ship1Bearing, 8*this.context.canvas.width/20, 15,this.paint)
+		let coordLOB = drawExtendedLine(X1,Y1,this.centerX,this.centerY);
+		this.drawLine(coordLOB[0],coordLOB[1],coordLOB[2],coordLOB[3],this.paintLOB);
+		this.drawText(ship1Bearing,coordLOB[0]-40,coordLOB[1],this.paintLOB);
+	}
+	if (Math.abs(ship4Bearing - heading) %90 != 0){
+		this.drawText("Line Of Bearing (Div): " + ship4Bearing, 8*this.context.canvas.width/20,45,this.paint)
+		let coordLOB = drawExtendedLine(X4,Y4,this.centerX,this.centerY);
+		this.drawLine(coordLOB[0],coordLOB[1],coordLOB[2],coordLOB[3],this.paintLOB);
+		this.drawText(ship4Bearing,coordLOB[0]-40,coordLOB[1],this.paintLOB);
+
+	}
+	
+    }
+
+    drawText(text, x, y, paint) {
+        const ctx = this.context; // Use the context stored in the class
+        ctx.fillStyle = paint.color; // Set the fill color for the text
+        ctx.font = "20px Arial"; // Set the font size and family
+        ctx.textAlign = "left"; // Align the text
+        ctx.textBaseline = "middle"; // Align vertically in the middle
+        ctx.fillText(text, x, y); // Draw the filled text
+    }
+
+    drawLine(startX, startY, endX, endY, paint) {
+
+        const ctx = this.context; // Use the context stored in the class
+    if (paint.dashPattern) {
+        ctx.setLineDash(paint.dashPattern);
+    } else {
+        ctx.setLineDash([]); // No dashes if not specified
+    }
+        ctx.strokeStyle = paint.color;
+        ctx.lineWidth = paint.strokeWidth;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+    }
+}
+
+// Wait for the DOM to load before initializing lineView
+window.onload = () => {
+    const canvas = document.getElementById("myCanvas");
+    const context = canvas.getContext("2d");
+    lineView = new LineView(context);  // Initialize lineView globally
+    lineView.onDraw(); // Call onDraw without arguments
+    course = 0;
+    whatForm("form1");
+};
+
+	
+    </script>
+
+</body>
+</html>
