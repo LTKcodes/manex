@@ -758,6 +758,12 @@ function LeftRight(originalBearing, newBearing) {
 	return [extendedX1,extendedY1,extendedX2, extendedY2];
 	}
 
+function threeDigits(number) {
+    // Convert number to string and pad with zeros to reach a total of 3 digits
+	number = Number(number);
+    return number.toString().padStart(3, '0');
+}
+
 
 
 
@@ -827,23 +833,22 @@ function LeftRight(originalBearing, newBearing) {
 
             i++;
         }
-	this.drawText("Heading: "+course , this.context.canvas.width/20 , 15, this.paint); 
+this.drawText("Heading: "+ threeDigits(course) , this.context.canvas.width/20 , 15, this.paint); 
 	let heading = course;
 	if (heading == 0){heading = 360;}
 	if (Math.abs(ship1Bearing - heading) %90 != 0){
-		this.drawText("Line Of Bearing (Guide): " + ship1Bearing, 8*this.context.canvas.width/20, 15,this.paint)
+		this.drawText("Line Of Bearing (Guide): " + threeDigits(ship1Bearing), 8*this.context.canvas.width/20, 15,this.paint)
 		let coordLOB = drawExtendedLine(X1,Y1,this.centerX,this.centerY);
 		this.drawLine(coordLOB[0],coordLOB[1],coordLOB[2],coordLOB[3],this.paintLOB);
-		this.drawText(ship1Bearing,coordLOB[0]-70,coordLOB[1],this.paintLOB);
+		this.drawText(threeDigits(ship1Bearing),coordLOB[0]-30,coordLOB[1]-40,this.paintLOB);
 	}
 	if (Math.abs(ship4Bearing - heading) %90 != 0){
-		this.drawText("Line Of Bearing (Div): " + ship4Bearing, 8*this.context.canvas.width/20,45,this.paint)
+		this.drawText("Line Of Bearing (Div): " + threeDigits(ship4Bearing), 8*this.context.canvas.width/20,45,this.paint)
 		let coordLOB = drawExtendedLine(X4,Y4,this.centerX,this.centerY);
 		this.drawLine(coordLOB[0],coordLOB[1],coordLOB[2],coordLOB[3],this.paintLOB);
-		this.drawText(ship4Bearing,coordLOB[0]-70,coordLOB[1],this.paintLOB);
+		this.drawText(threeDigits(ship4Bearing),coordLOB[0]-30,coordLOB[1]-40,this.paintLOB);
 
-	}
-	
+	}	
     }
 
     drawText(text, x, y, paint) {
