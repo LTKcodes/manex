@@ -834,13 +834,13 @@ function LeftRight(originalBearing, newBearing) {
 		this.drawText("Line Of Bearing (Guide): " + ship1Bearing, 8*this.context.canvas.width/20, 15,this.paint)
 		let coordLOB = drawExtendedLine(X1,Y1,this.centerX,this.centerY);
 		this.drawLine(coordLOB[0],coordLOB[1],coordLOB[2],coordLOB[3],this.paintLOB);
-		this.drawText(ship1Bearing,coordLOB[0]-40,coordLOB[1],this.paintLOB);
+		this.drawText(ship1Bearing,coordLOB[0]-70,coordLOB[1],this.paintLOB);
 	}
 	if (Math.abs(ship4Bearing - heading) %90 != 0){
 		this.drawText("Line Of Bearing (Div): " + ship4Bearing, 8*this.context.canvas.width/20,45,this.paint)
 		let coordLOB = drawExtendedLine(X4,Y4,this.centerX,this.centerY);
 		this.drawLine(coordLOB[0],coordLOB[1],coordLOB[2],coordLOB[3],this.paintLOB);
-		this.drawText(ship4Bearing,coordLOB[0]-40,coordLOB[1],this.paintLOB);
+		this.drawText(ship4Bearing,coordLOB[0]-70,coordLOB[1],this.paintLOB);
 
 	}
 	
