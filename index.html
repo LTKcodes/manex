@@ -611,14 +611,14 @@
 	}
 
         	oldCourse = course;
-		if (Math.abs(intship4Bearing) != Math.abs(ship4Bearing - course)){
+		if (angleCheck(intship4Bearing) != angleCheck(ship4Bearing - course)){
 			oldship4Bearing = intship4Bearing;
 			intship4Bearing =  (ship4Bearing - course);
 			console.log("FMN U Course", oldship4Bearing);
 
 		}
 
-		if (Math.abs(intship1Bearing) != Math.abs(ship1Bearing - course)){
+		if (angleCheck(intship1Bearing) != angleCheck(ship1Bearing - course)){
 			oldship1Bearing = intship1Bearing;
 			intship1Bearing =  (ship1Bearing - course);
 			console.log("FMN V Course", oldship1Bearing);
