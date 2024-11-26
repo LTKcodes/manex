@@ -50,7 +50,7 @@
     <button id = "guideButton" onclick="changeGuide(this)">Guide A1</button>
    <br><br>
 
-
+    <canvas id="oldCanvas" width="500" height="500"></canvas>
     <canvas id="myCanvas" width="500" height="500"></canvas>
 
 
@@ -68,6 +68,10 @@
 	let div = 0;
 	let newBearingsAndRanges;
 	let oldCourse, X1, Y1, X4, Y4; 
+	const oldCanvas = document.getElementById("oldCanvas");
+    	const oldContext = oldCanvas.getContext("2d");
+   	const canvas = document.getElementById("myCanvas");
+    	const context = canvas.getContext("2d");
 
 
 
@@ -800,6 +804,9 @@ function threeDigits(number) {
     }
 
     clearCanvas() {
+	oldContext.clearRect(0, 0, oldCanvas.width, oldCanvas.height);
+	this.drawText("Previous Formation" , this.context.canvas.width/20 , this.context.canvas.height-10, this.paint, oldContext); 
+    	oldContext.drawImage(canvas, 0, 0);
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
     }
 
