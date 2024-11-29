@@ -62,10 +62,12 @@
     <div id="courseTS" style="font-size: 18px; color: black; border: 1px solid black; padding: 10px; width: 300px;" >CTS: NA</div>
    <br><br>
 
-
-
     <canvas id="oldCanvas" width="500" height="500" style="border: 2px solid black; border-radius: 8px;"></canvas>
     <canvas id="myCanvas" width="500" height="500" style="border: 2px solid black; border-radius: 8px;"></canvas>
+
+   <br><br>
+
+    <div id="finalscript" style="font-size: 18px; color: black;  padding: 10px;" ></div>
 
 
 
@@ -86,7 +88,8 @@
     	const oldContext = oldCanvas.getContext("2d");
    	const canvas = document.getElementById("myCanvas");
     	const context = canvas.getContext("2d");
-	let corpenVal = 0, coCOLDIV = 0;
+	let corpenVal = 0, coCOLDIV = 0, divMan = 0;
+	let finalScript, standardDist;
 
 
 	function relvel(heading, guideInitialRange, guideFinalRange, guideInitialBearing, guideFinalBearing, guideSpeed, ownSpeed){
@@ -213,7 +216,9 @@
         	ship1Range = doubleSD;
         	ship2Range = SD;
         	ship4Range = SD;
-        	console.log("Form 1" + course);}
+        	console.log("Form 1" + course);
+		finalScript = "Ships are to form COLUMN in ORDER of sequence numbers.";
+		}
 
 	    if (form === "form2"){
         	console.log("Form 2" + course);
@@ -224,6 +229,7 @@
         	ship1Range = doubleSD;
         	ship2Range = SD;
         	ship4Range = SD;
+		finalScript = "Ships are to form COLUMN in REVERSE ORDER of sequence numbers."
 		}
 
 	    if (form === "form3"){
@@ -234,6 +240,7 @@
         	ship1Range = doubleSD;
         	ship2Range = SD;
         	ship4Range = SD;
+		finalScript = "Ships are to form LINE ABREAST to STBD in order of sequence numbers."
 
 		}
    	    if (form === "form4"){
@@ -244,6 +251,7 @@
         	ship1Range = doubleSD;
         	ship2Range = SD;
         	ship4Range = SD;
+		finalScript = "Ships are to form LINE ABREAST to PORT in order of sequence numbers."
 		}
    	    if (form === "form5"){
         	ship1Bearing = angleCheck(course - 90);
@@ -254,6 +262,7 @@
         	ship4Bearing = angleCheck(course + 180);
         	ship1Range = doubleSD;
         	ship4Range = SD;
+		finalScript = "Ships are to form DIV in COLUMN, div guides bearing abeam to STBD."
 		}
 
 	    if (form === "form6"){
@@ -264,6 +273,7 @@
         	ship4Bearing = angleCheck(course + 180);
         	ship1Range = doubleSD;
         	ship4Range = SD;
+		finalScript = "Ships are to form DIV in COLUMN, div guides bearing abeam to PORT."
 		}
 
 	    if (form === "form9"){
@@ -275,18 +285,10 @@
         	ship2Bearing =  ship2Data[1];
         	ship1Range = doubleSD;
         	ship4Range = SD;
+		finalScript = "Ships are to form DIV LINE ABREAST to STBD, div guides bearing astern."
 		}
 
-   	    if (form === "form9"){
-            	ship1Bearing = angleCheck(course + 90);
-        	ship1Bearing = course;
-        	ship4Bearing = angleCheck(course + 90);
-        	ship2Data = calculateRangeAndBearing(doubleSD, ship1Bearing, SD, angleCheck(course + 90));
-        	ship2Range = ship2Data[0];
-        	ship2Bearing =  ship2Data[1];
-        	ship1Range = doubleSD;
-        	ship4Range = SD;
-		}
+
 
    	    if (form === "form10"){
         ship1Bearing = course;
@@ -298,10 +300,13 @@
         	ship4Bearing = angleCheck(course - 90);
         	ship1Range = doubleSD;
         	ship4Range = SD;
+		finalScript = "Ships are to form DIV LINE ABREAST to PORT, div guides bearing astern."
 		}
 
 
 	    if (form === "fmn") {
+		finalScript = "Ships are to form on bearing " + threeDigits(lineBearing) + " from the guide";
+
         	let recplineBearing =  recp(lineBearing);
 	    if (div == 0) {
             console.log("RUNNING THE DIV = 0", String.valueOf(guide));
@@ -437,11 +442,13 @@
 
 	if (form === "turn"){
 		corpenVal = 1;
+		finalScript = "Ships are to turn to " + course;
 
 	//
 	}
 	
 	if (form === "fmnGDiv"){
+		finalScript = "Line guides are to form on bearing " + threeDigits(lineBearing) + " from the guide."
 
      		if (guide == 2){
             		ship2Data = calculateRangeAndBearing(SD, ship4Bearing, doubleSD, recp(lineBearing));
@@ -463,6 +470,7 @@
 	}
 
 	if (form === "fmnDiv"){
+		finalScript = "Ships are to form on " + lineBearing + " from the division guide"
 
         if (guide == 1){
             ship2Data = calculateRangeAndBearing(ship1Range, ship1Bearing, SD, lineBearing);
@@ -485,9 +493,11 @@
 	
 	}
 
-	if (form === "corpen"){
+	if (form === "corpen"){	
+		
+		
 
-
+		finalScript = "Ships are to wheel together to " + threeDigits(course) + "."
 
 		if ((Math.abs(ship1Bearing - oldCourse) % 90 === 0) && (Math.abs(ship4Bearing - oldCourse) % 90 === 0)) {
         		console.log("COL or LA");
@@ -611,6 +621,9 @@
 
 	if (form === "corpend"){
 
+		finalScript = "Each line is to wheel simultaneously to " + threeDigits(course) +".";
+
+
                 if (Math.abs(ship4Bearing - oldCourse)%90 == 0){
                     //Checks if LA or COL
 
@@ -702,6 +715,7 @@
 	}
 
 	if (form === "formu"){
+		finalScript = "Ships are to resume previous relative bearing and range from their guide, in this case " // add more here later
 		course = oldCourse;
 		ship2to4 = calculateRangeAndBearing(ship4Range,recp(ship4Bearing), ship2Range, (ship2Bearing));
 		ship4Bearing = angleCheck(oldship4Bearing + course);
@@ -713,6 +727,7 @@
 
 
 	if (form === "formv"){
+		finalScript = "Line guides are to resume previous relative bearing and range from the guide, in this case "
 		course = oldCourse;
 		ship1Bearing = angleCheck(oldship1Bearing + course);
         	ship2Data = calculateRangeAndBearing(ship4Range, ship4Bearing, doubleSD, ship1Bearing);
@@ -727,11 +742,9 @@
             div = 1;
         } else {
             console.log("SETTING DIV", "SETTING DIV 0");
-
 	    div = 0;
 	}
 
-        	oldCourse = course;
 		if (angleCheck(intship4Bearing) != angleCheck(ship4Bearing - course)){
 			oldship4Bearing = intship4Bearing;
 			intship4Bearing =  (ship4Bearing - course);
@@ -772,7 +785,8 @@
 			console.log("Div Man")
 			coCOLDIV = 0;
 			ownSpeed = ownSpeed - 1;	
-		};
+			divMan = 1;
+		} 
 
 		console.log("Checking COLA: ", checkingCOLA);
 
@@ -835,7 +849,8 @@
 					ownSpeed = guideSpeed * 0.75;
 
 					} else if (checkingReduceSpeed === 2)
-					{ownSpeed = guideSpeed;}
+					{ownSpeed = guideSpeed;			
+					}
 
 					CTS = Math.round(relvel(course, 2*SD, 2*SD, prevship1Bearing, ship1Bearing, guideSpeed, ownSpeed));
 					console.log("CTS Guide 1:", CTS);
@@ -865,22 +880,64 @@
 			console.log("CTS null here:", CTS);
 			console.log("Speed Guide null:", guideSpeed);
 			reqSpeed = guideSpeed;
+			ownSpeed = guideSpeed;
 
 
 		}
 
 		document.getElementById("courseTS").textContent = "CTS: "+ threeDigits(CTS) + ", Speed: " + reqSpeed +"kn";
+		standardDistance =  document.getElementById("SDist").value; 
+		if (standardDistance === null){
+			standardDistance = 2.5;
+		}
+
+		document.getElementById("finalscript").textContent = writeFinalScript();
+
 		checkingReduceSpeed  = 0;
+	
 
 
 
             lineView.updateBearingsAndRanges(newBearingsAndRanges);
+            oldCourse = course;
+
 		
 		
 	   		
 	}
-        // Get the canvas element and its drawing context
 
+
+
+	function writeFinalScript(){
+		if (divMan === 0) {
+			finalScript = finalScript + " This is an independent manoeuvre. Upon execution of signal, we will ";
+		} else {
+			finalScript = finalScript + " This is a division manoeuvre. Upon execution of signal, ship will take charge of D4 ";
+			divMan = 0;
+
+		}
+		console.log("Calculating oldCourse", oldCourse);
+		if (LeftRight(oldCourse, CTS) === 0){
+			finalScript = finalScript + "come right to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn, to get into station. "
+		} else{
+			finalScript = finalScript + "come left to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn, to get into station. "
+		}
+		
+		finalScript = finalScript + "When in station, we will be on course " + threeDigits(course) + ", Speed " + guideSpeed + "kn. "
+		
+		if (guide === 1 && div === 0){
+			finalScript = finalScript + "Guide is A1, will bear " + threeDigits(ship1Bearing) + ", " + 2 * standardDistance + "c from us." 
+		} else if (guide === 2 && div === 0){
+			finalScript = finalScript + "Guide is B2, will bear " + threeDigits(ship2Bearing) + ", " + ship2Range/SD * standardDistance + "c from us." 
+
+		} else if (guide ===2 && div === 1){
+			finalScript = finalScript + "Guide is B2, will bear " + threeDigits(ship1Bearing) + ", " + 2 * standardDistance + "c from line guide D4. D4 will bear " + threeDigits(ship4Bearing) + ", " + standardDistance + "c from us." 
+
+		}
+
+	
+		return finalScript;
+	};
 
     function TrueRelativeConverter(bearing, course){
         const trButton = document.getElementById("redgreen-select").value;
