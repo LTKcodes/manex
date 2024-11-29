@@ -86,7 +86,7 @@
     	const oldContext = oldCanvas.getContext("2d");
    	const canvas = document.getElementById("myCanvas");
     	const context = canvas.getContext("2d");
-	let corpenVal = 0;
+	let corpenVal = 0, coCOLDIV = 0;
 
 
 	function relvel(heading, guideInitialRange, guideFinalRange, guideInitialBearing, guideFinalBearing, guideSpeed, ownSpeed){
@@ -569,7 +569,8 @@
 
  	if ((Math.abs(ship4Bearing - oldCourse) / 180 === 1)){
 			console.log("COL HERE");     
-			if (div === 0){	corpenVal = 1;}     
+			if (div === 0){corpenVal = 1;}    
+			if (div === 1){coCOLDIV = 1} // COME BACK HERE TK
    
 
         		if (guide != 1){
@@ -766,11 +767,14 @@
             	ownSpeed = document.getElementById("ownSpeed").value;
 		
 		console.log("old Ship 4 bearing", prevship4Bearing);
-		if (prevship1Bearing !== ship1Bearing && prevship4Bearing === ship4Bearing){
+		if (prevship1Bearing !== ship1Bearing && prevship4Bearing === ship4Bearing || coCOLDIV === 1){
 		// checks if div manoeuvre
 			console.log("Div Man")
+			coCOLDIV = 0;
 			ownSpeed = ownSpeed - 1;	
 		};
+
+		console.log("Checking COLA: ", checkingCOLA);
 
 
 		if (corpenVal == 0){
@@ -778,11 +782,12 @@
 		if (guide === 1){
 			if (checkingCOLA === 1){
 				checkingCOLA = 0;
-			corpenVal = 0;
-			CTS = course;
-			console.log("CTS null:", CTS);
-			console.log("Speed Guide null:", guideSpeed);
-			reqSpeed = guideSpeed;
+				corpenVal = 0;
+				CTS = course;
+				console.log("CTS null COLA:", CTS);
+				console.log("Speed Guide null COLA:", guideSpeed);
+				reqSpeed = guideSpeed;
+				console.log("COLA Back to 0", checkingCOLA);
 
 			}else{
 
@@ -808,8 +813,9 @@
 
 		
 			} else if (guide === 2){
+				checkingCOLA = 0; // sets back to 0 since no effect from COLA
 
-				if (prevship4Bearing !== ship4Bearing){
+				if (prevship4Bearing !== ship4Bearing && div === 1){
 					checkingReduceSpeed = normCourseBearings(course,prevship4Bearing,ship4Bearing);
 					if (checkingReduceSpeed === 1 ){
 						ownSpeed = guideSpeed * 0.75;
@@ -821,29 +827,42 @@
 
 
 
-			} else{
+				} else{
+					if (prevship1Bearing !== ship1Bearing){					
+					checkingReduceSpeed = normCourseBearings(course,prevship1Bearing,ship1Bearing);
 
-			checkingReduceSpeed = normCourseBearings(course,prevship1Bearing,ship1Bearing);
+					if (checkingReduceSpeed === 1){
+					ownSpeed = guideSpeed * 0.75;
 
-			if (checkingReduceSpeed === 1){
-				ownSpeed = guideSpeed * 0.75;
+					} else if (checkingReduceSpeed === 2)
+					{ownSpeed = guideSpeed;}
 
-			} else if (checkingReduceSpeed === 2)
-			{ownSpeed = guideSpeed;}
+					CTS = Math.round(relvel(course, 2*SD, 2*SD, prevship1Bearing, ship1Bearing, guideSpeed, ownSpeed));
+					console.log("CTS Guide 1:", CTS);
+					console.log("Speed Guide 1:", ownSpeed);
+					reqSpeed = ownSpeed;} 
+					else{					
+								checkingReduceSpeed = normCourseBearings(course,prevship4Bearing,ship4Bearing);
+					if (checkingReduceSpeed === 1 ){
+						ownSpeed = guideSpeed * 0.75;
+					} else if (checkingReduceSpeed === 2){ownSpeed = guideSpeed;}
+						CTS = Math.floor(relvel(course, SD, SD, prevship4Bearing, ship4Bearing,  guideSpeed, ownSpeed));
+						console.log("CTS Guide 2:", CTS);
+						console.log("Speed Guide 2:", ownSpeed);
+						reqSpeed = ownSpeed;
 
-			CTS = Math.round(relvel(course, 2*SD, 2*SD, prevship1Bearing, ship1Bearing, guideSpeed, ownSpeed));
-			console.log("CTS Guide 1:", CTS);
-			console.log("Speed Guide 1:", ownSpeed);
-			reqSpeed = ownSpeed;
-			}
+						}
+
+
+				}
 
 
 
-		} 
+			} 
 		} else if (corpenVal == 1){
 			corpenVal = 0;
 			CTS = course;
-			console.log("CTS null:", CTS);
+			console.log("CTS null here:", CTS);
 			console.log("Speed Guide null:", guideSpeed);
 			reqSpeed = guideSpeed;
 
