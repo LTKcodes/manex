@@ -67,7 +67,7 @@
 
    <br><br>
 
-    <div id="finalscript" style="font-size: 18px; color: black;  padding: 10px;" ></div>
+    <div id="finalscript" style="font-size: 30px; color: black;  padding: 10px;" ></div>
 
 
 
@@ -88,7 +88,7 @@
     	const oldContext = oldCanvas.getContext("2d");
    	const canvas = document.getElementById("myCanvas");
     	const context = canvas.getContext("2d");
-	let corpenVal = 0, coCOLDIV = 0, divMan = 0;
+	let corpenVal = 0, coCOLDIV = 0, divMan = 0, corpenColPiv = 0, corpenfinalScript = 0, autoGuide = 0;
 	let finalScript, standardDist;
 
 
@@ -305,7 +305,7 @@
 
 
 	    if (form === "fmn") {
-		finalScript = "Ships are to form on bearing " + threeDigits(lineBearing) + " from the guide";
+		finalScript = "Ships are to form on bearing " + threeDigits(lineBearing) + " from the guide.";
 
         	let recplineBearing =  recp(lineBearing);
 	    if (div == 0) {
@@ -470,7 +470,7 @@
 	}
 
 	if (form === "fmnDiv"){
-		finalScript = "Ships are to form on " + lineBearing + " from the division guide"
+		finalScript = "Ships are to form on " + lineBearing + " from the division guide."
 
         if (guide == 1){
             ship2Data = calculateRangeAndBearing(ship1Range, ship1Bearing, SD, lineBearing);
@@ -494,7 +494,7 @@
 	}
 
 	if (form === "corpen"){	
-		
+		corpenfinalScript = 1;
 		
 
 		finalScript = "Ships are to wheel together to " + threeDigits(course) + "."
@@ -516,7 +516,9 @@
 
 		if ((Math.abs(ship4Bearing - oldCourse) % 180 !== 0)){
 			console.log("Ship 4 in LA")
-			if (div === 1){checkingCOLA = 1;}
+			if (div === 1){
+			checkingCOLA = 1;
+			divMan = 1;}
 
  		if ((ship4Bearing === angleCheck(oldCourse + 90) && leftOrRight == 0) || (ship4Bearing == angleCheck(oldCourse - 90) && leftOrRight == 1)){
 			
@@ -525,6 +527,7 @@
                         if (guide!=2){
 
 		            alert("Automatic Guide Change: B2");
+			    autoGuide = 1;
                             guide = 2;
                             guideButton.textContent = "Guide B2";
                         }
@@ -535,7 +538,7 @@
 
                         if (guide != 1){
 			    console.log("LA Change guide", leftOrRight)
-
+			    autoGuide = 1;
 		    	    alert("Automatic Guide Change: A1");
                             guide = 1;
                             guideButton.textContent = "Guide A1";
@@ -553,6 +556,8 @@
 
                 if (guide != 1) {
         	    console.log("Changing Guide to 1");
+		    autoGuide = 1;
+
                     guide = 1;
                     guideButton.textContent = "Guide A1";  // Update button text
 
@@ -563,6 +568,8 @@
                 	if (guide != 2) {
         	    		console.log("Changing Guide to 2");
                    		guide = 2;
+			    autoGuide = 1;
+
                     		guideButton.textContent = "Guide B2";  // Update button text
 	    		        alert("Automatic Guide Change: B2");
 
@@ -580,13 +587,25 @@
  	if ((Math.abs(ship4Bearing - oldCourse) / 180 === 1)){
 			console.log("COL HERE");     
 			if (div === 0){corpenVal = 1;}    
-			if (div === 1){coCOLDIV = 1} // COME BACK HERE TK
+			if (div === 1){
+				coCOLDIV = 1;
+				console.log("Checking if pivot:",LeftRight(oldCourse, course));
+				console.log("Checking if pivot (ship 1):",LeftRight(course, ship1Bearing));
+
+				if (LeftRight(oldCourse, course) !== LeftRight(course, ship1Bearing)){
+					console.log("Corpen when column and div and own ship is pivot");
+					corpenColPiv = 1;
+					
+				}
+			} // COME BACK HERE TK
    
 
         		if (guide != 1){
 		    	    alert("Automatic Guide Change: A1");
                             guide = 1;
                             guideButton.textContent = "Guide A1";
+			    autoGuide = 1;
+
                         }
 
 
@@ -598,6 +617,8 @@
 		            alert("Automatic Guide Change: B2");
                             guide = 2;
                             guideButton.textContent = "Guide B2";
+			    autoGuide = 1;
+
                         }
                 
 
@@ -621,7 +642,9 @@
 
 	if (form === "corpend"){
 
+
 		finalScript = "Each line is to wheel simultaneously to " + threeDigits(course) +".";
+		corpenfinalScript = 1;
 
 
                 if (Math.abs(ship4Bearing - oldCourse)%90 == 0){
@@ -645,6 +668,8 @@
 				     alert("Automatic Guide Change: A1");
                                      guide = 1;
                                      guideButton.textContent = "Guide A1";
+			   		 autoGuide = 1;
+	
                                  }
 
 
@@ -655,6 +680,8 @@
 				    alert("Automatic Guide Change: B2");
                                     guide = 2;
                                     guideButton.textContent = "Guide B2";
+			    autoGuide = 1;
+
                                 }
 
 
@@ -678,6 +705,8 @@
                             guide = 2;
                             guideButton.textContent = "Guide B2";
 			    alert("Automatic Guide Change: B2");
+			    autoGuide = 1;
+
                         }
 
 
@@ -689,6 +718,8 @@
                             guide = 1;
                             guideButton.textContent = "Guide A1";
     		   	    alert("Automatic Guide Change: A1");
+			    autoGuide = 1;
+
 
                         }
 
@@ -792,10 +823,11 @@
 
 
 		if (corpenVal == 0){
+
 		
 		if (guide === 1){
 			if (checkingCOLA === 1){
-				checkingCOLA = 0;
+				//checkingCOLA = 0;
 				corpenVal = 0;
 				CTS = course;
 				console.log("CTS null COLA:", CTS);
@@ -809,6 +841,7 @@
 
 			console.log("Old ship 1 bearing:", oldship1Bearing);
 			console.log("Now ship 1 bearing:", ship1Bearing);
+			
 
 			checkingReduceSpeed = normCourseBearings(course,prevship1Bearing,ship1Bearing);
 
@@ -816,18 +849,34 @@
 				ownSpeed = guideSpeed * 0.75;
 
 			} else if (checkingReduceSpeed === 2)
-			{ownSpeed = guideSpeed;}
+			{ownSpeed = guideSpeed;
+			} 
+
 			
 
 			CTS = Math.round(relvel(course, 2*SD, 2*SD, prevship1Bearing, ship1Bearing, guideSpeed, ownSpeed));
 			console.log("CTS Guide 1:", CTS);
 			console.log("Speed Guide 1:", ownSpeed);
-			reqSpeed = ownSpeed;}
+			reqSpeed = ownSpeed;
+
+			if (corpenColPiv === 1){
+				// special pivot
+				console.log("Pivot Speed set")
+				corpenColPiv = 0;
+				ownSpeed = guideSpeed;
+				reqSpeed = ownSpeed;
+
+				CTS = course;
+
+			}
+
+
+
+			}
 
 
 		
 			} else if (guide === 2){
-				checkingCOLA = 0; // sets back to 0 since no effect from COLA
 
 				if (prevship4Bearing !== ship4Bearing && div === 1){
 					checkingReduceSpeed = normCourseBearings(course,prevship4Bearing,ship4Bearing);
@@ -909,26 +958,54 @@
 
 
 	function writeFinalScript(){
+		if (autoGuide === 1) {
+			finalScript = finalScript + " There is an automatic change of guide. Guide is now ";
+			if (guide === 1){
+				finalScript = finalScript + " A1. "
+				if (div === 1){
+					finalScript = finalScript + "Corresponding line guide, C3."
+				}
+			} else {
+				finalScript = finalScript + " B2. "
+				if (div === 1){
+					finalScript = finalScript + "Corresponding line guide, D4."
+				}
+			}
+		}
 		if (divMan === 0) {
-			finalScript = finalScript + " This is an independent manoeuvre. Upon execution of signal, we will ";
+			finalScript = finalScript + " This is an independent manoeuvre. Upon execution of signal, ship will ";
 		} else {
-			finalScript = finalScript + " This is a division manoeuvre. Upon execution of signal, ship will take charge of D4 ";
+			finalScript = finalScript + " This is a division manoeuvre. Upon execution of signal, ship will take charge of D4, ";
 			divMan = 0;
 
 		}
 		console.log("Calculating oldCourse", oldCourse);
+
+		
 		if (LeftRight(oldCourse, CTS) === 0){
-			finalScript = finalScript + "come right to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn, to get into station. "
+			finalScript = finalScript + "come right " 
 		} else{
-			finalScript = finalScript + "come left to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn, to get into station. "
+			finalScript = finalScript + "come left "
+		}
+		if (corpenfinalScript === 1){
+			 corpenfinalScript = 0;
+			finalScript = finalScript + "by wheeling "	
+			
+		}
+		if (checkingCOLA === 0){
+			finalScript = finalScript + "to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn, to get into station. When in station, ship will be on course " + threeDigits(course) + ", Speed " + guideSpeed + "kn. "
+
+		} else if (checkingCOLA === 1){
+			finalScript = finalScript + "to " + threeDigits(course) + " to get into station. Own ship will wheel to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn. When in station, ship will be on course " + threeDigits(course) + ", Speed " + guideSpeed + "kn. "
+			checkingCOLA = 0;
+
 		}
 		
-		finalScript = finalScript + "When in station, we will be on course " + threeDigits(course) + ", Speed " + guideSpeed + "kn. "
 		
-		if (guide === 1 && div === 0){
+		if (guide === 1){
 			finalScript = finalScript + "Guide is A1, will bear " + threeDigits(ship1Bearing) + ", " + 2 * standardDistance + "c from us." 
 		} else if (guide === 2 && div === 0){
-			finalScript = finalScript + "Guide is B2, will bear " + threeDigits(ship2Bearing) + ", " + ship2Range/SD * standardDistance + "c from us." 
+			finalScript = finalScript + "Guide is B2, will bear " + threeDigits(ship2Bearing) + ", " + Math.round(ship2Range/SD*10)/10 * standardDistance + "c from us." 
 
 		} else if (guide ===2 && div === 1){
 			finalScript = finalScript + "Guide is B2, will bear " + threeDigits(ship1Bearing) + ", " + 2 * standardDistance + "c from line guide D4. D4 will bear " + threeDigits(ship4Bearing) + ", " + standardDistance + "c from us." 
