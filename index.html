@@ -81,7 +81,7 @@
 	let lineView;
 	let guide = 1;
 	let lineBearing;
-	let div = 0, guideChange = 0,checkingReduceSpeed  = 0, checkingCOLA = 0;
+	let div = 0, guideChange = 0,checkingReduceSpeed  = 0, checkingCOLA = 0, signalChangeScript = 0;
 	let newBearingsAndRanges;
 	let oldCourse, X1, Y1, X4, Y4; 
 	const oldCanvas = document.getElementById("oldCanvas");
@@ -89,7 +89,7 @@
    	const canvas = document.getElementById("myCanvas");
     	const context = canvas.getContext("2d");
 	let corpenVal = 0, coCOLDIV = 0, divMan = 0, corpenColPiv = 0, corpenfinalScript = 0, autoGuide = 0;
-	let finalScript, standardDist;
+	let finalScript, relativeScript, standardDist;
 
 
 	function relvel(heading, guideInitialRange, guideFinalRange, guideInitialBearing, guideFinalBearing, guideSpeed, ownSpeed){
@@ -168,6 +168,9 @@
 	function changeGuide(button) {
     		const buttonGuide = button.innerText;
 		guideChange = 1;
+		if (signalChangeScript === 0){signalChangeScript = 1;}
+		else {signalChangeScript = 0;}
+		
    		if (buttonGuide.includes("A1")) {
         	button.textContent = "Guide B2";
         	guide = 2;
@@ -305,7 +308,7 @@
 
 
 	    if (form === "fmn") {
-		finalScript = "Ships are to form on bearing " + threeDigits(lineBearing) + " from the guide.";
+		finalScript = "Ships are to form on " + relativeScript + " from the guide.";
 
         	let recplineBearing =  recp(lineBearing);
 	    if (div == 0) {
@@ -316,38 +319,58 @@
 
                 if (ship2Range > ship1Range){
                     console.log("LINE ABREAST WITH 1 NOT END SHIP","");
+			finalScript += " However as guide is not endship"
 
                     if (angleCheck(ship2Bearing - course) == 90 || angleCheck(ship2Bearing - course) == 270){
+			finalScript += " and ships are forming from line abreast to column. Ships to port are to form on bearing indicated and the rest reciprocal. "
                         if (recp(ship1Bearing) == angleCheck(course - 90)){
                             console.log("LA TO COL","");
                             ship2Bearing = recplineBearing;
                             ship1Bearing = recplineBearing;
                             ship4Bearing = recplineBearing;
+			    finalScript += "In this case B2 will form on " + threeDigits(recplineBearing) + " and C3, D4 will form on " + threeDigits(lineBearing) + "."
+
                         } else {
+
                             ship2Bearing = lineBearing;
                             ship1Bearing = lineBearing;
                             ship4Bearing = lineBearing;
+			    finalScript += "In this case C3, B4 will form on " + threeDigits(recplineBearing) + " and B2 will form on " + threeDigits(lineBearing) + "."
+
                         }
 
                     } else{
 
-                        if (angleCheck(ship2Bearing - course) == 0 || angleCheck(ship2Bearing - course) == 180){
+                        if (angleCheck(ship2Bearing - course) == 0 || angleCheck(ship2Bearing - course) == 180 && angleCheck(lineBearing - course) % 90 === 0){
+
                             console.log("COL TO LA","COL TO LA");
                             if (ship2Bearing == course){
+				finalScript += " and ships are forming from column to line abreast. Ships ahead are to form on bearing indicated, the rest reciprocal."
                                 ship1Bearing = lineBearing;
                                 ship2Bearing = lineBearing;
                                 ship4Bearing = lineBearing;
-                            } else {
+			    finalScript += " B2 will form on " + threeDigits(recplineBearing) + " and C3, D4 will form on " + threeDigits(lineBearing) + "."
+
+                            } else{
+
+				console.log("checking linebearing - course", angleCheck(lineBearing - course))
+				finalScript += " and ships are forming from column to line abreast. Ships ahead are to form on bearing indicated, the rest reciprocal."
                                 ship1Bearing = recplineBearing;
                                 ship2Bearing = recplineBearing;
                                 ship4Bearing = recplineBearing;
+			    finalScript += " C3 and D4 will form on " + threeDigits(lineBearing) + " and B2 will form on " + threeDigits(recplineBearing) + "."
+
+
                             }
 
                         } else{
+
                             console.log("NEAREST BEARING","NEAREST BEARING");
-                            ship1Bearing =  getCloserBearing(lineBearing, ship1Bearing);
+                            ship1Bearing = getCloserBearing(lineBearing, ship1Bearing);
                             ship2Bearing = getCloserBearing(lineBearing, ship2Bearing);
                             ship4Bearing = getCloserBearing(lineBearing, ship4Bearing);
+			    finalScript += ", ships are to form on bearing indicated or reciprocal, whichever nearer. In this case, B2 to form on " + threeDigits((ship2Bearing)) + " and C3, D4 on " + threeDigits(recp(ship4Bearing)) + "."
+
                         }
 
                     }
@@ -356,39 +379,59 @@
                     ship1Bearing =  recplineBearing;
                     ship2Bearing = recplineBearing;
                     ship4Bearing = lineBearing;
+		 
                 }
 
             } else if (guide == 2) {
 
                 if (ship1Range > ship2Range){
+			finalScript += " However as guide is not endship"
+
                     // checks if 90degrees from old line of bearing
                     if ((lineBearing - ship2Bearing)%90 == 0){
 
                         if (angleCheck(ship1Bearing - course) == 90 || angleCheck(ship1Bearing - course) == 270){
+			finalScript += " and ships are forming from line abreast to column. Ships to port are to form on bearing indicated and the rest reciprocal. "
+
                             console.log("LINE ABREAST WITH 2 NOT END SHIP","");
                             if (recp(ship2Bearing) == angleCheck(course - 90)){
                                 console.log("LA TO COL","");
+			finalScript += " and ships are forming from line abreast to column. Ships to port are to form on bearing indicated and the rest reciprocal. "
+
                                 ship2Bearing = recplineBearing;
                                 ship1Bearing = recplineBearing;
                                 ship4Bearing = lineBearing;
+			    finalScript += "A1 will form on " + threeDigits(recplineBearing) + " and C3, D4 will form on " + threeDigits(lineBearing) + "."
+
                             } else {
+			finalScript += " and ships are forming from line abreast to column. Ships to port are to form on bearing indicated and the rest reciprocal. "
+
                                 ship2Bearing = lineBearing;
                                 ship1Bearing = lineBearing;
                                 ship4Bearing = recplineBearing;
+			    finalScript += "C3, B4 will form on " + threeDigits(recplineBearing) + " and A1 will form on " + threeDigits(lineBearing) + "."
+
                             }
 
                         } else{
 
-                            if (angleCheck(ship1Bearing - course) == 0 || angleCheck(ship1Bearing - course) == 180){
+                            if (angleCheck(ship1Bearing - course) == 0 || angleCheck(ship1Bearing - course) == 180 && angleCheck(lineBearing - course) % 90 === 0){
                                 console.log("COL TO LA","COL TO LA");
+				finalScript += " and ships are forming from column to line abreast. Ships ahead are to form on bearing indicated, the rest reciprocal."
+
                                 if (ship1Bearing == course){
                                     ship1Bearing = lineBearing;
                                     ship2Bearing = lineBearing;
                                     ship4Bearing = recplineBearing;
+	    				finalScript += " A1 will form on " + threeDigits(lineBearing) + " and C3, D4 will form on " + threeDigits(recplineBearing) + "."
+
+
                                 } else {
                                     ship1Bearing = recplineBearing;
                                     ship2Bearing = recplineBearing;
                                     ship4Bearing = lineBearing;
+			    finalScript += " C3 and D4 will form on " + threeDigits(recplineBearing) + " and A1 will form on " + threeDigits(lineBearing) + "."
+
                                 }
 
                             }
@@ -400,6 +443,8 @@
                         ship1Bearing =  getCloserBearing(lineBearing, ship1Bearing);
                         ship2Bearing = getCloserBearing(lineBearing, ship2Bearing);
                         ship4Bearing = getCloserBearing(lineBearing, ship4Bearing);
+			finalScript += ", ships are to form on bearing indicated or reciprocal, whichever nearer. In this case, A1 to form on " + threeDigits((ship2Bearing)) + " and C3, D4 on " + threeDigits((ship4Bearing)) + "."
+
                     }
 
                 } else {
@@ -433,7 +478,7 @@
                 ship2Bearing = resultShip2[1];
                 ship2Range = resultShip2[0];
                 resultShip1 = calculateRangeAndBearing(ship2Range, ship2Bearing, SD, lineBearing);
-                ship1Bearing = resultShip1[1];
+                ship1Bearing = ship1Bearing; /// TESTING HERE FOR THE SHIP 1 BEARING
                 ship1Range = resultShip1[0];
 
             }
@@ -442,13 +487,13 @@
 
 	if (form === "turn"){
 		corpenVal = 1;
-		finalScript = "Ships are to turn to " + course;
+		finalScript = "Ships are to turn to " + relativeScript;
 
 	//
 	}
 	
 	if (form === "fmnGDiv"){
-		finalScript = "Line guides are to form on bearing " + threeDigits(lineBearing) + " from the guide."
+		finalScript = "Line guides are to form on " + relativeScript + " from the guide."
 
      		if (guide == 2){
             		ship2Data = calculateRangeAndBearing(SD, ship4Bearing, doubleSD, recp(lineBearing));
@@ -470,7 +515,7 @@
 	}
 
 	if (form === "fmnDiv"){
-		finalScript = "Ships are to form on " + lineBearing + " from the division guide."
+		finalScript = "Ships are to form on " + relativeScript + " from the division guide."
 
         if (guide == 1){
             ship2Data = calculateRangeAndBearing(ship1Range, ship1Bearing, SD, lineBearing);
@@ -497,7 +542,7 @@
 		corpenfinalScript = 1;
 		
 
-		finalScript = "Ships are to wheel together to " + threeDigits(course) + "."
+		finalScript = "Ships are to wheel together to " + relativeScript + "."
 
 		if ((Math.abs(ship1Bearing - oldCourse) % 90 === 0) && (Math.abs(ship4Bearing - oldCourse) % 90 === 0)) {
         		console.log("COL or LA");
@@ -643,7 +688,7 @@
 	if (form === "corpend"){
 
 
-		finalScript = "Each line is to wheel simultaneously to " + threeDigits(course) +".";
+		finalScript = "Each line is to wheel simultaneously to " + relativeScript +".";
 		corpenfinalScript = 1;
 
 
@@ -959,8 +1004,23 @@
 
 	function writeFinalScript(){
 		if (autoGuide === 1) {
-			finalScript = finalScript + " There is an automatic change of guide. Guide is now ";
+			autoGuide = 0;
+			finalScript = finalScript + " There is an automatic change of guide, guide is now ";
 			if (guide === 1){
+				finalScript = finalScript + " A1. "
+				if (div === 1){
+					finalScript = finalScript + "Corresponding line guide, C3."
+				}
+			} else {
+				finalScript = finalScript + " B2. "
+				if (div === 1){
+					finalScript = finalScript + "Corresponding line guide, D4."
+				}
+			}
+		} else if (signalChangeScript === 1){
+			signalChangeScript = 0;
+			finalScript += " There is a signal change of guide, guide is now ";
+				if (guide === 1){
 				finalScript = finalScript + " A1. "
 				if (div === 1){
 					finalScript = finalScript + "Corresponding line guide, C3."
@@ -1022,12 +1082,18 @@
         //trButton = greenRed.getSelectedItem().toString();
 
         if (trButton === "true"){
+	    relativeScript = " true bearing " + threeDigits(bearing) 
             return bearing;
         } else if (trButton === "red"){
+	    relativeScript = "red " + bearing +", "
             bearing = angleCheck(course - bearing);
+	    relativeScript += " true bearing " + threeDigits(bearing) 
             return bearing;
         } else{
+	    relativeScript = "green " + bearing + ", "
             bearing = angleCheck(course + bearing);
+	    relativeScript += " true bearing " + threeDigits(bearing)
+
             return bearing;
         }
 
