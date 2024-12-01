@@ -430,7 +430,7 @@
                                     ship1Bearing = recplineBearing;
                                     ship2Bearing = recplineBearing;
                                     ship4Bearing = lineBearing;
-			    finalScript += " C3 and D4 will form on " + threeDigits(recplineBearing) + " and A1 will form on " + threeDigits(lineBearing) + "."
+			    finalScript += " C3 and D4 will form on " + threeDigits(lineBearing) + " and A1 will form on " + threeDigits(recplineBearing) + "."
 
                                 }
 
@@ -690,6 +690,7 @@
 
 		finalScript = "Each line is to wheel simultaneously to " + relativeScript +".";
 		corpenfinalScript = 1;
+		divMan = 1;
 
 
                 if (Math.abs(ship4Bearing - oldCourse)%90 == 0){
@@ -698,6 +699,7 @@
                     if (Math.abs(ship4Bearing - oldCourse) != 0 && Math.abs(ship4Bearing - oldCourse) != 180) {
                         // Ship 4 in LA
                         console.log("Line Abreast","4 bearing 90");
+			checkingCOLA = 1;
 		
 
 
@@ -1056,7 +1058,7 @@
 			finalScript = finalScript + "to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn, to get into station. When in station, ship will be on course " + threeDigits(course) + ", Speed " + guideSpeed + "kn. "
 
 		} else if (checkingCOLA === 1){
-			finalScript = finalScript + "to " + threeDigits(course) + " to get into station. Own ship will wheel to " + threeDigits(CTS) + ", Speed " + ownSpeed + "kn. When in station, ship will be on course " + threeDigits(course) + ", Speed " + guideSpeed + "kn. "
+			finalScript = finalScript + "to " + threeDigits(course) + ". Own ship will wheel to " + threeDigits(CTS) + ", Speed " + reqSpeed + "kn to get into station. When in station, ship will be on course " + threeDigits(course) + ", Speed " + guideSpeed + "kn. "
 			checkingCOLA = 0;
 
 		}
